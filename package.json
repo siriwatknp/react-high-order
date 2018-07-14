@@ -1,9 +1,9 @@
 {
-  "name": "react-component-boilerplate",
-  "description": "Boilerplate for React.js components",
-  "author": "Juho Vepsalainen",
-  "user": "survivejs",
-  "version": "6.1.2",
+  "name": "react-high-order",
+  "description": "A set of high order react components",
+  "author": "Siriwat Kunaporn",
+  "user": "siriwatknp",
+  "version": "1.0.0",
   "scripts": {
     "start": "catalog start docs",
     "test": "jest",
@@ -69,11 +69,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/survivejs/react-component-boilerplate.git"
+    "url": "https://github.com/siriwatknp/react-high-order.git"
   },
-  "homepage": "https://survivejs.github.io/react-component-boilerplate/",
+  "homepage": "https://github.com/siriwatknp/react-high-order/",
   "bugs": {
-    "url": "https://github.com/survivejs/react-component-boilerplate/issues"
+    "url": "https://github.com/siriwatknp/react-high-order/issues"
   },
   "jest": {
     "collectCoverage": true,
