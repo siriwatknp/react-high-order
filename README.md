@@ -108,15 +108,36 @@ is to help you increase your productivity in web development without messing cor
 ### TOC
 
 * Render props
-    + [`Caller`](#Caller)
-    + [`Collector`](#Collector)
+    + [`Caller`](#caller)
+    + [`Collector`](#collector)
     
     
 ## Render Props
 ### `Caller`
-usage: Call api within component
+**`description`** : accept child only as a function and provide wrappedApi, status, ...others to it.
+ 
+**`use case`** : Call api within component
 
-accept only child as a function and provide wrappedApi, status to it.
+**`parameters`** 
+
+| props             | type                  | default   |
+| -------------     |-------------          | -----     |
+| children (*)      | fn(wrappedApi, options) => react element   | -         |
+| api (*)           | fn => promise         | -         |
+| onRequest         | fn => void            | () => {}  |
+| onSuccess         | fn => void            | () => {}  |
+| onFailure         | fn => void            | () => {}  |
+
+**`children options`**
+
+| parameters             | type                  | initial state   | description |
+| -------------     |-------------          | -----     | --- |
+| status          | object         | null         | `{ state:<String: 'isInitial', 'isSuccess', 'isFailure'>, isInitial:<Bool>, isRequest:<Bool>, isSuccess:<Bool>, isFailure:<Bool> }`
+| response         | -           | null  | resolve from api
+| error         | -            | null  | reject from api
+| reset         | fn            | fn  | reset status, response, error to initial state | 
+
+**`example`** 
 ```js
   <Caller api={api}>
     {(wrappedApi, { status, response, error, reset }) => {
@@ -131,10 +152,52 @@ accept only child as a function and provide wrappedApi, status to it.
   </Caller>
 ```
 
-### `Collector`
-usage: Show modal before deleting something
+**`Notes`** You can change state of the status by doing this
+```js
+import { Caller } from 'react-high-order'
 
-accept only child as a function and provide wrappedAction.
+Caller.REQUEST = 'isPending'
+Caller.SUCCESS = 'isFulfilled'
+Caller.FAILURE = 'isFailure'
+
+export default Caller
+
+// then use Caller from above
+// the result will be like
+
+import Caller from '../file above';
+
+<Caller>
+  {(wrappedApi, { status }) => (
+    // status = { isInitial<Bool>, isPending<Bool>, isFulfilled<Bool>, isFailure<Bool> }
+  )}
+</Caller>
+```
+
+### `Collector`
+**`description`**
+accept child only as a function and provide wrappedAction that you can called later. 
+
+**`use case`**: Show modal before deleting something
+
+**`parameters`** 
+
+| props             | type                  | default   |
+| -------------     |-------------          | -----     |
+| children (*)      | fn(wrappedAction, options) => react element   | -         |
+| action (*)           | fn => (promise or void)         | -         |
+| actionIsPromise         | bool            | false |
+| resetAfterAction         | bool or object            | false  |
+
+**`children options`**
+
+| parameters             | type                  | initial state   | description |
+| -------------     |-------------          | -----     | --- |
+| collect          | fn         | -         | set activated to true
+| reset         | fn           | -  | reset to initial state
+| activated         | bool           | false  | a boolean that tell activate sth (such as modal) 
+
+**`example`**
 ```js
 <Collector action={deleteApi}>
     {(wrappedAction, { collect, reset, activated }) => (
