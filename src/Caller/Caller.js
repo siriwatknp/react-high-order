@@ -112,7 +112,8 @@ class Caller extends React.Component {
     const { children } = this.props;
     const { status, response, error } = this.state;
     return (
-      children(this.callApi, {
+      children({
+        wrappedApi: this.callApi,
         status,
         response,
         error,

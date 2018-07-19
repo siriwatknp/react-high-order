@@ -36,7 +36,7 @@ storiesOf('React-High-Order', module)
           api={() => api(false)}
           startCallerWhenMount={boolean('start caller when mount', false)}
         >
-          {(wrappedApi, { status, response, error, reset }) => {
+          {({ wrappedApi, status, response, error, reset }) => {
             console.log('status', status);
             console.log('response', response);
             console.log('error', error);
@@ -66,7 +66,7 @@ storiesOf('React-High-Order', module)
         <Collector
           action={api}
         >
-          {(wrappedAction, { collect, reset, activated }) => (
+          {({ wrappedAction, collect, reset, activated }) => (
             <div>
               {activated && (
                 <div>
@@ -91,7 +91,7 @@ storiesOf('React-High-Order', module)
           api={() => api(false)}
           startCallerWhenMount={boolean('start caller when mount', false)}
         >
-          {(wrappedApi, { status, response, error, reset: resetCaller }) => {
+          {({ wrappedApi, status, response, error, reset: resetCaller }) => {
             return (
               <Collector
                 action={wrappedApi}
@@ -101,7 +101,7 @@ storiesOf('React-High-Order', module)
                   failure: false
                 }}
               >
-                {(wrappedAction, { collect, reset, activated }) => (
+                {({ wrappedAction, collect, reset, activated }) => (
                   <div>
                     {activated && (
                       <div style={{

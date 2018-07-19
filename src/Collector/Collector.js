@@ -70,7 +70,8 @@ class Collector extends React.Component {
     const { children } = this.props;
     const { activated } = this.state;
     return (
-      children(this.callAction, {
+      children({
+        wrappedAction: this.callAction,
         collect: this.collect,
         activated,
         reset: this.reset

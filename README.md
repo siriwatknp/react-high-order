@@ -122,7 +122,7 @@ is to help you increase your productivity in web development without messing cor
 
 | props             | type                  | default   |
 | -------------     |-------------          | -----     |
-| children (*)      | fn(wrappedApi, options) => react element   | -         |
+| children (*)      | fn(options) => react element   | -         |
 | api (*)           | fn => promise         | -         |
 | onRequest         | fn => void            | () => {}  |
 | onSuccess         | fn => void            | () => {}  |
@@ -132,6 +132,7 @@ is to help you increase your productivity in web development without messing cor
 
 | parameters             | type                  | initial state   | description |
 | -------------     |-------------          | -----     | --- |
+| wrappedApi         | fn           | -  | the same fn as api from props but wrapped with status
 | status          | object         | null         | `{ state:<String: 'isInitial', 'isSuccess', 'isFailure'>, isInitial:<Bool>, isRequest:<Bool>, isSuccess:<Bool>, isFailure:<Bool> }`
 | response         | -           | null  | resolve from api
 | error         | -            | null  | reject from api
@@ -184,7 +185,7 @@ accept child only as a function and provide wrappedAction that you can called la
 
 | props             | type                  | default   |
 | -------------     |-------------          | -----     |
-| children (*)      | fn(wrappedAction, options) => react element   | -         |
+| children (*)      | fn(options) => react element   | -         |
 | action (*)           | fn => (promise or void)         | -         |
 | actionIsPromise         | bool            | false |
 | resetAfterAction         | bool or object            | false  |
@@ -193,6 +194,7 @@ accept child only as a function and provide wrappedAction that you can called la
 
 | parameters             | type                  | initial state   | description |
 | -------------     |-------------          | -----     | --- |
+| wrappedAction          | fn         | -         | the same fn as action from props but wrapped to toggle activated
 | collect          | fn         | -         | set activated to true
 | reset         | fn           | -  | reset to initial state
 | activated         | bool           | false  | a boolean that tell activate sth (such as modal) 
