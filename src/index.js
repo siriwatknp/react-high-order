@@ -2,5 +2,6 @@
 module.exports = {
   Caller: require('./Caller').default,
   Collector: require('./Collector').default,
+  Collection: require('./Collection').default
 };
 
