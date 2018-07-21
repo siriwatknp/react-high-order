@@ -216,4 +216,102 @@ accept child only as a function and provide wrappedAction that you can called la
 </Collector>
 ```
 
+### `Collection`
 
+**`description`**
+control collection contain adding new item, update, duplicate, remove item
+
+**`use case`**: show list in form that user can add more and edit each item
+
+**`parameters`** 
+
+| props             | type                  | default   |
+| -------------     |-------------          | -----     |
+| children (*)      | fn(options) => react element   | -         |
+| initialItems           | array of string, object         | -         |
+
+**`children options`**
+
+| parameters             | type                  | initial state   | description |
+| -------------     |-------------          | -----     | --- |
+| items          | array of string, object         | []         | the same format as initialItems
+| addToIndex          | fn(newItem, index)         | -         | accept 2 params `newItem`: item that will be added and `index`: index to be added in front 
+| duplicateIndex         | fn(index, callback)           | -  | accept 2 params `index`: item index that will be duplicate and `callback`: (item of that index) => new duplicated Item 
+| onItemChange         | fn(newItem<fn, string, object>, predicate)           | -  | accept 2 params `newItem`: if it is function accept item that pass predicate and return a new one, else new item `predicate` a predicate to find item to be changed.
+| onItemChangeByIndex          | fn(newItem<fn, string, object>, index)         | -         | same as `onItemChange` but change `predicate` to `index` to specify which index to be changed.
+| removeItem          | fn(predicate)         | -         | accept 2 params `item` and `index` return true will remove the item
+| removeIndex          | fn(index)         | -         | remove the item that is the same as `index`
+| renderItems          | array         | -         | a wrapped array that can be used for cleaner code, contain all wrapped function `item`, `onDuplicate`, `onChange`, `onRemove` (check out example for more detail usage)
+
+**`other methods`**   
+
+| name             | type                  | description   |
+| -------------     |-------------          | -----     |
+| appendDuplicateName      | static fn(name) => name (copy)   | a util fn for append 'copy' to name (use with duplicate method)         |
+| resetItems           | fn(items, callback)         | to reset items (using setState internally, so you can inject callback as normal)         |
+
+**`example`**
+```js
+  <div>
+    <h2>Fully Control</h2>
+    <Collection
+      ref={this._collection1} // you can use ref to access `resetItems`
+      initialItems={this.state.items}
+    >
+      {({ items, addToIndex, onItemChange, duplicateIndex, removeIndex }) => (
+        <div>
+          <ul>
+            {items.map((item, index) => (
+              <li key={index}>
+                {item.name}
+                <button
+                  onClick={() => onItemChange({ name: `${item.name}+` }, (_, i) => index === i)}
+                >append +
+                </button>
+                <button onClick={() => duplicateIndex(index, () => ({ name: Collection.appendDuplicateName(item.name) }))}>dup</button>
+                <button onClick={() => removeIndex(index)}>remove</button>
+              </li>
+            ))}
+          </ul>
+          <button onClick={() => addToIndex({ name: 'test' })}>
+            add
+          </button>
+        </div>
+      )}
+    </Collection>
+    <button onClick={this.reassignItems1}>reset</button>
+    <hr />
+    <h2>Light Version</h2>
+    <Collection
+      ref={this._collection2}
+      initialItems={this.state.items}
+    >
+      {({ renderItems, addToIndex }) => (
+        <div>
+          <ul>
+            {renderItems.map((source, index) => {
+              const { item, onChange, onRemove, onDuplicate } = source;
+              return (
+                <li key={index}>
+                  {item.name}
+                  <button
+                    onClick={() => onChange({ name: `${item.name}+` })}
+                  >append +
+                  </button>
+                  <button onClick={() => onDuplicate({ name: Collection.appendDuplicateName(item.name) })}>
+                    dup
+                  </button>
+                  <button onClick={onRemove}>remove</button>
+                </li>
+              );
+            })}
+          </ul>
+          <button onClick={() => addToIndex({ name: 'test' })}>
+            add
+          </button>
+        </div>
+      )}
+    </Collection>
+    <button onClick={this.reassignItems2}>reset</button>
+  </div>
+```

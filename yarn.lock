@@ -5010,7 +5010,7 @@ interpret@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
 
-invariant@^2.2.0, invariant@^2.2.1, invariant@^2.2.2:
+invariant@^2.2.0, invariant@^2.2.1, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   dependencies:
@@ -8192,6 +8192,14 @@ restore-cursor@^2.0.0:
 ret@~0.1.10:
   version "0.1.15"
   resolved "https://registry.yarnpkg.com/ret/-/ret-0.1.15.tgz#b8a4825d5bdb1fc3f6f53c2bc33f81388681c7bc"
+
+reusable-functions@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/reusable-functions/-/reusable-functions-1.0.7.tgz#16d6717149cb8207afd8d64f80b603108ec08898"
+  dependencies:
+    babel-preset-es2015 "^6.24.1"
+    invariant "^2.2.4"
+    lodash "^4.17.10"
 
 right-align@^0.1.1:
   version "0.1.3"

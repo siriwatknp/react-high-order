@@ -9,6 +9,7 @@ import {
 
 import Caller from '../../src/Caller';
 import Collector from '../../src/Collector';
+import CollectionController from './CollectionController'
 
 // Caller.REQUEST = 'isPending'
 // Caller.SUCCESS = 'isFulfilled'
@@ -28,6 +29,14 @@ const api = (shouldResolve = true) => {
 };
 
 storiesOf('React-High-Order', module)
+  .add(
+    'Collection',
+    () => {
+      return (
+        <CollectionController />
+      )
+    }
+  )
   .add(
     'Caller',
     () => {
