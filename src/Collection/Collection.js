@@ -1,31 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isFunc from 'lodash/isFunction';
-import { addItemToList } from 'reusable-functions';
+import { addItemToList, updateItemInList, substringBetween } from 'reusable-functions';
 
 // a provider that contain several util about collection
-
-const updateItemInList = (items, predicate, callback) => (
-  items.map((item, index) => {
-    if (predicate(item, index)) {
-      return callback(item);
-    }
-    return item;
-  })
-);
-
-const subStringBetween = (string, startPattern, endPattern) => {
-  const startIndex = string.lastIndexOf(startPattern) + startPattern.length;
-  const substring = string.substring(startIndex);
-  const endIndex = substring.indexOf(endPattern);
-  return string.substr(startIndex, endIndex);
-};
 
 const appendCopyLabel = (string) => {
   if (!string.includes('copy')) {
     return `${string} (copy)`;
   }
-  const order = subStringBetween(string, 'copy', ')');
+  const order = substringBetween(string, 'copy', ')');
   if (!order) {
     return string.replace('copy', 'copy 2');
   }
