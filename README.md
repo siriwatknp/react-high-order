@@ -110,6 +110,7 @@ is to help you increase your productivity in web development without messing cor
 * Render props
     + [`Caller`](#caller)
     + [`Collector`](#collector)
+    + [`Collection`](#collection)
     
     
 ## Render Props
