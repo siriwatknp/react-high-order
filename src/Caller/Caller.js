@@ -1,12 +1,7 @@
+/* eslint-disable */
 import React from 'react';
 import PropTypes from 'prop-types';
-
-const STATES = {
-  INITIAL: 'isInitial',
-  REQUEST: 'isRequest',
-  SUCCESS: 'isSuccess',
-  FAILURE: 'isFailure'
-};
+import STATES from '../helpers/status';
 
 class Caller extends React.Component {
   static defaultProps = {
@@ -33,6 +28,8 @@ class Caller extends React.Component {
   constructor() {
     super();
 
+    // create this._status, so we can change constant value from outside
+    // and use throughout the component
     this._status = {
       state: null,
       [Caller.INITIAL]: false,
@@ -52,42 +49,42 @@ class Caller extends React.Component {
   reset = () => this.setState(this._initialState);
 
   setStatus = status => ({
+    // everytime state is set, only one status will be true
+    // that's why we use this._status as model.
     ...this._status,
     ...status,
     state: Object.keys(status)[0]
   });
 
-  setRequest = () => {
-    if (this._isMounted) {
-      this.setState({
-        status: this.setStatus({ [Caller.REQUEST]: true }),
-        response: null,
-        error: null
-      });
+  returnByStatus = (status, value) => {
+    switch (status) {
+      case Caller.REQUEST:
+        return {
+          response: null,
+          error: null
+        };
+      case Caller.SUCCESS:
+        return { response: value };
+      case Caller.FAILURE:
+        return { error: value };
+      default:
+        return {};
     }
-    return this.props.onRequest();
   };
 
-  setSuccess = (response) => {
+  createStateTrigger = (status, callback) => (value) => {
     if (this._isMounted) {
       this.setState({
-        status: this.setStatus({ [Caller.SUCCESS]: true }),
-        response
+        status: this.setStatus({ [status]: true }),
+        ...this.returnByStatus(status, value)
       });
     }
-    return this.props.onSuccess(response);
+    return callback(this.props);
   };
 
-  setFailure = (error) => {
-    if (this._isMounted) {
-      this.setState({
-        status: this.setStatus({ [Caller.FAILURE]: true }),
-        error
-      });
-    }
-    this.props.onFailure(error);
-    throw error;
-  };
+  setRequest = this.createStateTrigger(Caller.REQUEST, ({ onRequest }) => onRequest());
+  setSuccess = this.createStateTrigger(Caller.SUCCESS, ({ onSuccess }) => onSuccess());
+  setFailure = this.createStateTrigger(Caller.FAILURE, ({ onFailure }) => onFailure());
 
   callApi = () => {
     this.setRequest();

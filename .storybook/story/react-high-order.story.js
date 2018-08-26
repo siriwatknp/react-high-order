@@ -11,6 +11,7 @@ import {
 import Caller from '../../src/Caller';
 import Activator from '../../src/Activator';
 import CollectionController from './CollectionController';
+import MultiCaller from '../../src/MultiCaller';
 
 // Caller.REQUEST = 'isPending'
 // Caller.SUCCESS = 'isFulfilled'
@@ -122,7 +123,7 @@ storiesOf('React-High-Order', module)
                 resetAfterAction={object('reset after action', { success: true })}
               >
                 {({ activate, active, createAction, reset }) => {
-                  const catchApi = () => createAction(wrappedApi)().catch((error) => console.log('error', error))
+                  const catchApi = () => createAction(wrappedApi)().catch((error) => console.log('error', error));
                   return (
                     <div>
                       {active && (
@@ -162,7 +163,7 @@ storiesOf('React-High-Order', module)
                         </button>
                       </div>
                     </div>
-                  )
+                  );
                 }}
               </Activator>
             );
@@ -170,5 +171,33 @@ storiesOf('React-High-Order', module)
         </Caller>
       );
     }
-  );
+  )
+  .add('Multi Caller', () => (
+    <MultiCaller
+      api={[
+        api,
+        deleteApi,
+      ]}
+      onSuccess={[
+        ,
+        () => console.log('yeah!')
+      ]}
+    >
+      {({ wrappedApi, status, response, error, resetAll }) => {
+        console.log('status', status)
+        console.log('response', response)
+        console.log('error', error)
+        const [api, deleteApi] = wrappedApi;
+        return (
+          <div>
+            {error && (
+              <button onClick={resetAll}>reset</button>
+            )}
+            {button('call api1', api)}
+            {button('call api2', deleteApi)}
+          </div>
+        );
+      }}
+    </MultiCaller>
+  ));
 
