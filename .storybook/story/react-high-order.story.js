@@ -4,12 +4,13 @@ import {
   select,
   boolean,
   text,
-  button
+  button,
+  object
 } from '@storybook/addon-knobs/react';
 
 import Caller from '../../src/Caller';
-import Collector from '../../src/Collector';
-import CollectionController from './CollectionController'
+import Activator from '../../src/Activator';
+import CollectionController from './CollectionController';
 
 // Caller.REQUEST = 'isPending'
 // Caller.SUCCESS = 'isFulfilled'
@@ -28,13 +29,22 @@ const api = (shouldResolve = true) => {
   });
 };
 
+const deleteApi = (item) => {
+  console.log('called');
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(item + ' is deleted');
+    }, 1000);
+  });
+};
+
 storiesOf('React-High-Order', module)
   .add(
     'Collection',
     () => {
       return (
         <CollectionController />
-      )
+      );
     }
   )
   .add(
@@ -72,23 +82,28 @@ storiesOf('React-High-Order', module)
     'Collector',
     () => {
       return (
-        <Collector
-          action={api}
+        <Activator
+          actionIsPromise={boolean('action is promise', true)}
+          resetAfterAction={object('reset after action', { success: true })}
         >
-          {({ wrappedAction, collect, reset, activated }) => (
-            <div>
-              {activated && (
-                <div>
-                  <button onClick={wrappedAction}>call action</button>
-                  <button onClick={reset}>cancel</button>
+          {({ activate, active, createAction, reset }) => {
+            const loggedApi = (id) => deleteApi(id)
+              .then((val) => console.log('val', val));
+            return (
+              <div>
+                {active && (
+                  <div>
+                    <button onClick={createAction(loggedApi)}>call action</button>
+                    <button onClick={reset}>cancel</button>
+                  </div>
+                )}
+                <div style={{ marginTop: 40 }}>
+                  <button onClick={() => activate('id1')}>activate</button>
                 </div>
-              )}
-              <div style={{ marginTop: 40 }}>
-                <button onClick={collect}>activate</button>
               </div>
-            </div>
-          )}
-        </Collector>
+            );
+          }}
+        </Activator>
       );
     }
   )
@@ -102,55 +117,54 @@ storiesOf('React-High-Order', module)
         >
           {({ wrappedApi, status, response, error, reset: resetCaller }) => {
             return (
-              <Collector
-                action={wrappedApi}
-                actionIsPromise
-                resetAfterAction={{
-                  success: true,
-                  failure: false
-                }}
+              <Activator
+                actionIsPromise={boolean('action is promise', true)}
+                resetAfterAction={object('reset after action', { success: true })}
               >
-                {({ wrappedAction, collect, reset, activated }) => (
-                  <div>
-                    {activated && (
-                      <div style={{
-                        padding: 18,
-                        border: '1px solid #f5f5f5'
-                      }}>
-                        {error && (
-                          <div style={{
-                            padding: 18,
-                            boxShadow: '0 0 10px 0 rgba(0,0,0,0.12)'
-                          }}>
-                            <p>error please try again</p>
-                            <button onClick={wrappedAction}>try again</button>
-                          </div>
-                        )}
+                {({ activate, active, createAction, reset }) => {
+                  const catchApi = () => createAction(wrappedApi)().catch((error) => console.log('error', error))
+                  return (
+                    <div>
+                      {active && (
                         <div style={{
-                          marginTop: 18,
-                          display: 'flex',
-                          justifyContent: 'space-between'
+                          padding: 18,
+                          border: '1px solid #f5f5f5'
                         }}>
-                          <button onClick={wrappedAction}>
-                            {status.isRequest ? 'calling...' : 'call action'}
-                          </button>
-                          <button onClick={reset}>cancel</button>
+                          {error && (
+                            <div style={{
+                              padding: 18,
+                              boxShadow: '0 0 10px 0 rgba(0,0,0,0.12)'
+                            }}>
+                              <p>error please try again</p>
+                              <button onClick={catchApi}>try again</button>
+                            </div>
+                          )}
+                          <div style={{
+                            marginTop: 18,
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                          }}>
+                            <button onClick={catchApi}>
+                              {status.isRequest ? 'calling...' : 'call action'}
+                            </button>
+                            <button onClick={reset}>cancel</button>
+                          </div>
                         </div>
+                      )}
+                      <div style={{ marginTop: 40 }}>
+                        <button
+                          onClick={() => {
+                            resetCaller();
+                            activate();
+                          }}
+                        >
+                          activate
+                        </button>
                       </div>
-                    )}
-                    <div style={{ marginTop: 40 }}>
-                      <button
-                        onClick={() => {
-                          resetCaller();
-                          collect();
-                        }}
-                      >
-                        activate
-                      </button>
                     </div>
-                  </div>
-                )}
-              </Collector>
+                  )
+                }}
+              </Activator>
             );
           }}
         </Caller>

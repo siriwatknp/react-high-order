@@ -175,11 +175,11 @@ import Caller from '../file above';
 </Caller>
 ```
 
-### `Collector`
+### `Activator`
 **`description`**
-accept child only as a function and provide wrappedAction that you can called later. 
+accept child only as a function and provide 'createAction' that you can input callback to call. 
 
-**`use case`**: Show modal before deleting something
+**`use case`**: Show modal before deleting something (great for using with Caller)
 
 **`parameters`** 
 
@@ -194,27 +194,30 @@ accept child only as a function and provide wrappedAction that you can called la
 
 | parameters             | type                  | initial state   | description |
 | -------------     |-------------          | -----     | --- |
-| wrappedAction          | fn         | -         | the same fn as action from props but wrapped to toggle activated
-| collect          | fn         | -         | set activated to true
+| activate          | fn         | -         | set activated to true and can accept params and store it for later use
+| active         | bool           | false  | a boolean that tell activate sth (such as modal)
+| createAction          | fn         | -         | the same fn as action from props but wrapped to toggle activated
 | reset         | fn           | -  | reset to initial state
-| activated         | bool           | false  | a boolean that tell activate sth (such as modal) 
+| params         | array           | null  | array of params that you provide when use activate(...params) 
 
 **`example`**
 ```js
-<Collector action={deleteApi}>
-    {(wrappedAction, { collect, reset, activated }) => (
+<Activator actionIsPromise resetAfterAction={{ isRequest: true }}>
+    {({ activate, active, params, createAction, reset }) => (
+      // params[0] = 'item to delete'
       <div>
-        <Modal open={activated}>
-          <button onClick={wrappedAction}>call action</button>
+        <Modal open={active}>
+          <button onClick={createAction(deleteApi)}>call action</button> // deleteApi will receive 'item to delete' as first parameter
           <button onClick={reset}>cancel</button>
         </Modal>  
         <div>
-          <button onClick={collect}>activate</button>
+          <button onClick={() => activate('item to delete')}>activate</button>
         </div>
       </div>
     )}
-</Collector>
+</Activator>
 ```
+You can change static status in Activator as same as Caller
 
 ### `Collection`
 
