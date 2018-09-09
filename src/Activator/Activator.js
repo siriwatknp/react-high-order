@@ -15,10 +15,13 @@ const STATES = {
   FAILURE: 'isFailure'
 };
 
+function isPromise(obj) {
+  return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+}
+
 class Activator extends React.Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
-    actionIsPromise: PropTypes.bool,
     resetAfterAction: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.shape({
@@ -30,7 +33,6 @@ class Activator extends React.Component {
   };
 
   static defaultProps = {
-    actionIsPromise: false,
     resetAfterAction: false
   };
 
@@ -65,30 +67,33 @@ class Activator extends React.Component {
     this.setState(this._initialState);
   };
 
-  createAction = callback => () => {
-    const { actionIsPromise, resetAfterAction } = this.props;
-    if (actionIsPromise) {
+  decorate = callback => (...args) => {
+    const { resetAfterAction } = this.props;
+    const result = callback(...args);
+    if (isPromise(result)) {
       if (Activator.validate(resetAfterAction, Activator.REQUEST)) {
         this.reset();
       }
-      return callback(...this.state.params)
-        .then((result) => {
+      return result
+        .then((value) => {
+          console.log('value', value);
           if (Activator.validate(resetAfterAction, Activator.SUCCESS)) {
             this.reset();
           }
-          return Promise.resolve(result);
+          return Promise.resolve(value);
         })
         .catch((error) => {
+          console.log('error', error);
           if (Activator.validate(resetAfterAction, Activator.FAILURE)) {
             this.reset();
           }
           throw error;
         });
     }
-    if (Activator.validate(resetAfterAction, Activator.SUCCESS)) {
+    if (Activator.validate(resetAfterAction)) {
       this.reset();
     }
-    return callback(...this.state.params);
+    return result;
   };
 
   render() {
@@ -96,7 +101,7 @@ class Activator extends React.Component {
     const { active, params } = this.state;
     return (
       children({
-        createAction: this.createAction,
+        decorate: this.decorate,
         activate: this.activate,
         active,
         reset: this.reset,

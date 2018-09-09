@@ -1,10 +1,12 @@
 /* eslint-disable */
 import React from 'react';
 import PropTypes from 'prop-types';
+import isFunction from 'lodash/isFunction';
 import STATES from '../helpers/status';
 
 class Caller extends React.Component {
   static defaultProps = {
+    onDidMount: () => {},
     onRequest: () => {},
     onSuccess: () => {},
     onFailure: () => {},
@@ -12,6 +14,7 @@ class Caller extends React.Component {
   };
 
   static propTypes = {
+    onDidMount: PropTypes.func,
     onRequest: PropTypes.func,
     onSuccess: PropTypes.func,
     onFailure: PropTypes.func,
@@ -46,10 +49,12 @@ class Caller extends React.Component {
     this.state = this._initialState;
   }
 
-  reset = () => this.setState(this._initialState);
+  reset = (callback) => this.setState(this._initialState, () => (
+    isFunction(callback) ? callback(this.state) : {}
+  ));
 
   setStatus = status => ({
-    // everytime state is set, only one status will be true
+    // every time state is set, only one status will be true
     // that's why we use this._status as model.
     ...this._status,
     ...status,
@@ -77,14 +82,19 @@ class Caller extends React.Component {
       this.setState({
         status: this.setStatus({ [status]: true }),
         ...this.returnByStatus(status, value)
+      }, () => {
+        // call callback after status is changed
+        return callback(this.state);
       });
     }
-    return callback(this.props);
+    if (status === Caller.FAILURE) {
+      throw value
+    }
   };
 
-  setRequest = this.createStateTrigger(Caller.REQUEST, ({ onRequest }) => onRequest());
-  setSuccess = this.createStateTrigger(Caller.SUCCESS, ({ onSuccess }) => onSuccess());
-  setFailure = this.createStateTrigger(Caller.FAILURE, ({ onFailure }) => onFailure());
+  setRequest = (...args) => this.createStateTrigger(Caller.REQUEST, this.props.onRequest)(...args);
+  setSuccess = (...args) => this.createStateTrigger(Caller.SUCCESS, this.props.onSuccess)(...args);
+  setFailure = (...args) => this.createStateTrigger(Caller.FAILURE, this.props.onFailure)(...args);
 
   callApi = () => {
     this.setRequest();
@@ -95,7 +105,10 @@ class Caller extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-    const { startCallerWhenMount } = this.props;
+    const { startCallerWhenMount, onDidMount } = this.props;
+    if (onDidMount) {
+      onDidMount(this.state);
+    }
     if (startCallerWhenMount) {
       this.callApi();
     }

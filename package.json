@@ -24,6 +24,7 @@
   "module": "dist-es6",
   "jsnext:main": "dist-es6",
   "devDependencies": {
+    "@material-ui/core": "^3.0.2",
     "@storybook/addon-info": "^3.4.8",
     "@storybook/addon-knobs": "^3.4.8",
     "@storybook/addon-options": "^3.4.8",
@@ -59,9 +60,12 @@
     "react-dom": "^16.2.0",
     "react-emotion": "^9.2.5",
     "react-github-corner": "^2.1.0",
+    "react-json-view": "^1.19.1",
+    "recompose": "^0.30.0",
     "rimraf": "^2.6.2",
     "styled-system": "^2.3.6",
     "sync-exec": "^0.6.2",
+    "typeface-roboto": "^0.0.54",
     "webpack": "^3.10.0"
   },
   "peerDependencies": {

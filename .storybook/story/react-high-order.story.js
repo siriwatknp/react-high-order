@@ -22,8 +22,10 @@ const api = (shouldResolve = true) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (shouldResolve) {
+        console.log('Resolve');
         resolve('success');
       } else {
+        console.log('Reject');
         reject('failed');
       }
     }, 1000);
@@ -49,67 +51,7 @@ storiesOf('React-High-Order', module)
     }
   )
   .add(
-    'Caller',
-    () => {
-      return (
-        <Caller
-          api={() => api(false)}
-          startCallerWhenMount={boolean('start caller when mount', false)}
-        >
-          {({ wrappedApi, status, response, error, reset }) => {
-            console.log('status', status);
-            console.log('response', response);
-            console.log('error', error);
-            return (
-              <div>
-                <p>
-                  {status.isInitial && 'Initialized'}
-                  {status.isRequest && 'Requesting'}
-                  {status.isSuccess && 'Success'}
-                  {status.isFailure && 'Failed!'}
-                </p>
-                {error && (
-                  <button onClick={reset}>reset</button>
-                )}
-                {button('call api', wrappedApi)}
-              </div>
-            );
-          }}
-        </Caller>
-      );
-    }
-  )
-  .add(
-    'Collector',
-    () => {
-      return (
-        <Activator
-          actionIsPromise={boolean('action is promise', true)}
-          resetAfterAction={object('reset after action', { success: true })}
-        >
-          {({ activate, active, createAction, reset }) => {
-            const loggedApi = (id) => deleteApi(id)
-              .then((val) => console.log('val', val));
-            return (
-              <div>
-                {active && (
-                  <div>
-                    <button onClick={createAction(loggedApi)}>call action</button>
-                    <button onClick={reset}>cancel</button>
-                  </div>
-                )}
-                <div style={{ marginTop: 40 }}>
-                  <button onClick={() => activate('id1')}>activate</button>
-                </div>
-              </div>
-            );
-          }}
-        </Activator>
-      );
-    }
-  )
-  .add(
-    'Caller + Collector',
+    'Caller + Activator',
     () => {
       return (
         <Caller
@@ -118,12 +60,12 @@ storiesOf('React-High-Order', module)
         >
           {({ wrappedApi, status, response, error, reset: resetCaller }) => {
             return (
-              <Activator
-                actionIsPromise={boolean('action is promise', true)}
-                resetAfterAction={object('reset after action', { success: true })}
-              >
-                {({ activate, active, createAction, reset }) => {
-                  const catchApi = () => createAction(wrappedApi)().catch((error) => console.log('error', error));
+              <Activator resetAfterAction={object('reset after action', { isSuccess: true })}>
+                {({ activate, active, decorate, params, reset }) => {
+                  const catchApi = () => (
+                    decorate(wrappedApi)(...params)
+                      .catch((error) => console.log('error', error))
+                  );
                   return (
                     <div>
                       {active && (
@@ -176,7 +118,7 @@ storiesOf('React-High-Order', module)
     <MultiCaller
       api={[
         api,
-        deleteApi,
+        deleteApi
       ]}
       onSuccess={[
         ,
@@ -184,9 +126,9 @@ storiesOf('React-High-Order', module)
       ]}
     >
       {({ wrappedApi, status, response, error, resetAll }) => {
-        console.log('status', status)
-        console.log('response', response)
-        console.log('error', error)
+        console.log('status', status);
+        console.log('response', response);
+        console.log('error', error);
         const [api, deleteApi] = wrappedApi;
         return (
           <div>
