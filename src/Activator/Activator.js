@@ -25,9 +25,9 @@ class Activator extends React.Component {
     resetAfterAction: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.shape({
-        request: PropTypes.bool,
-        success: PropTypes.bool,
-        failure: PropTypes.bool
+        isRequest: PropTypes.bool,
+        isSuccess: PropTypes.bool,
+        isFailure: PropTypes.bool
       })
     ])
   };
@@ -64,7 +64,7 @@ class Activator extends React.Component {
   };
 
   reset = () => {
-    this.setState(this._initialState);
+    this.setState({ active: false });
   };
 
   decorate = callback => (...args) => {
@@ -76,14 +76,13 @@ class Activator extends React.Component {
       }
       return result
         .then((value) => {
-          console.log('value', value);
+          console.log('hello');
           if (Activator.validate(resetAfterAction, Activator.SUCCESS)) {
             this.reset();
           }
           return Promise.resolve(value);
         })
         .catch((error) => {
-          console.log('error', error);
           if (Activator.validate(resetAfterAction, Activator.FAILURE)) {
             this.reset();
           }

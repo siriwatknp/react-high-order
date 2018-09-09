@@ -27,7 +27,7 @@ const JsonViewer = compose(
         <Typography variant={'title'} component={'h1'} color={'primary'} gutterBottom>Current State</Typography>
         <ReactJson src={{ value }} />
       </Grid>
-      <Grid item xs={5}>
+      <Grid item xs={5} style={{ paddingRight: 20 }}>
         {children({ displayJson: setState })}
       </Grid>
     </Grid>

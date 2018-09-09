@@ -28,12 +28,16 @@ class Modal extends React.Component {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="primary">
-            Disagree
-          </Button>
-          <Button onClick={onSubmit} color="primary" autoFocus>
-            Agree
-          </Button>
+          {onClose && (
+            <Button onClick={onClose} color="primary">
+              Disagree
+            </Button>
+          )}
+          {onSubmit && (
+            <Button onClick={onSubmit} color="primary" autoFocus>
+              Agree
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     );

@@ -1,14 +1,12 @@
-import { button } from '@storybook/addon-knobs/react';
 import React from 'react';
 import pick from 'lodash/pick';
 
 // CONTROLLERS
 import JsonViewer from '../controllers/JsonViewer';
+import { Caller } from '../../src/index';
 
 // COMPONENTS
 import Button from '@material-ui/core/Button';
-
-import { Caller } from '../../src/index';
 
 import { getComments } from '../api';
 

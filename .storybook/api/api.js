@@ -9,3 +9,9 @@ export const getComments = (shouldReject) => new Promise((resolve, reject) => {
     return resolve(comments)
   }, 2000)
 });
+
+export const deleteComment = (comments, commentId) => new Promise((resolve) => {
+  return setTimeout(() => {
+    resolve(comments.filter(({ id }) => id !== commentId))
+  }, 2000)
+});

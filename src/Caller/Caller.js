@@ -89,6 +89,8 @@ class Caller extends React.Component {
     }
     if (status === Caller.FAILURE) {
       throw value
+    } else {
+      return value
     }
   };
 
@@ -96,9 +98,9 @@ class Caller extends React.Component {
   setSuccess = (...args) => this.createStateTrigger(Caller.SUCCESS, this.props.onSuccess)(...args);
   setFailure = (...args) => this.createStateTrigger(Caller.FAILURE, this.props.onFailure)(...args);
 
-  callApi = () => {
+  callApi = (...args) => {
     this.setRequest();
-    return this.props.api()
+    return this.props.api(...args)
       .then(this.setSuccess)
       .catch(this.setFailure);
   };
